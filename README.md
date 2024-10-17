@@ -1,6 +1,6 @@
-# CCWC - Crickett Coding Word Count
+# CCWC - Coding Challenge Word Count
 
-CCWC (Crickett Coding Word Count) is a simplified version of the Linux `wc` command-line utility. It computes the number of lines, words, characters, and bytes in files, mimicking the behavior of the `wc` command.
+CCWC (Coding Challenge Word Count) is a simplified version of the Linux `wc` command-line utility. It computes the number of lines, words, characters, and bytes in files, mimicking the behavior of the `wc` command.
 
 ## Features
 
@@ -22,4 +22,4 @@ ruby ccwc.rb [OPTION]... [FILE]...
 - -w : Output the number of words in the file(s).
 - -c : Output the number of bytes in the file(s).
 - -m : Output the number of characters in the file(s).
-  If no options are specified, CCWC will output the line count, word count, and byte count by default.
+- If no options are specified, CCWC will output the line count, word count, and byte count by default.

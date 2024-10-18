@@ -93,7 +93,7 @@ class CCWC
   #
   # If no options are provided, it defaults to counting lines, words, and bytes.
   #
-  # @return [Boolean] Returns true if no options were passed, otherwise false
+  # @return [Boolean] Returns true if no options were passed, otherwise false.
   def no_options?
     @options_hash.values.all? { |value| value == false }
   end

@@ -1,4 +1,4 @@
-# CCWC (Crickett Coding Word Count) - A simplified version of the Linux `wc` command-line utility.
+# CCWC (Coding Challenge Word Count) - A simplified version of the Linux `wc` command-line utility.
 #
 # This class is designed to mimic the behavior of the Linux `wc` command, computing the number
 # of lines, words, characters, and bytes in files. The class processes multiple file paths and handles specific

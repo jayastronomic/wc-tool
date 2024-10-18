@@ -74,6 +74,7 @@
   <ul class="link-list" role="directory">
     <li ><a href="#method-c-new">::new</a>
     <li ><a href="#method-i-compute">#compute</a>
+    <li ><a href="#method-i-format_output">#format_output</a>
     <li ><a href="#method-i-get_byte_count">#get_byte_count</a>
     <li ><a href="#method-i-get_character_count">#get_character_count</a>
     <li ><a href="#method-i-get_line_count">#get_line_count</a>
@@ -122,15 +123,88 @@
         </div>
 
         <div class="method-description">
-          <p>Initializes the <a href="CCWC.html"><code>CCWC</code></a> object and parses the command-line arguments</p>
+          <p>Initializes the <a href="CCWC.html"><code>CCWC</code></a> object and parses the command-line arguments.</p>
 
-<p>@param [Array&lt;String&gt;] args The command-line arguments (file paths and options)</p>
+<p>@param [Array&lt;String&gt;] args The command-line arguments (file paths and options).</p>
+
+<pre>The options include:
+  - `-l`: line count
+  - `-w`: word count
+  - `-c`: byte count
+  - `-m`: character count
+If no options are passed, it defaults to counting lines, words, and bytes.</pre>
 
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 23</span>
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">args</span>)
+  <span class="ruby-ivar">@total_line_count</span> = <span class="ruby-value">0</span>
+  <span class="ruby-ivar">@total_word_count</span> = <span class="ruby-value">0</span>
+  <span class="ruby-ivar">@total_byte_count</span> = <span class="ruby-value">0</span>
+  <span class="ruby-ivar">@total_character_count</span> = <span class="ruby-value">0</span>
+  <span class="ruby-ivar">@file_paths</span> = []
+  <span class="ruby-ivar">@options_hash</span> = {
+    <span class="ruby-string">&quot;l&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>, <span class="ruby-comment"># Line count option</span>
+    <span class="ruby-string">&quot;w&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>, <span class="ruby-comment"># Word count option</span>
+    <span class="ruby-string">&quot;c&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>, <span class="ruby-comment"># Byte count option</span>
+    <span class="ruby-string">&quot;m&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">false</span>, <span class="ruby-comment"># Character count option</span>
+  }
   <span class="ruby-identifier">parse</span>(<span class="ruby-identifier">args</span>)
-  <span class="ruby-identifier">compute</span>()
+<span class="ruby-keyword">end</span></pre>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+      <div id="method-i-compute" class="method-detail ">
+        <div class="method-header">
+          <div class="method-heading">
+            <span class="method-name">compute</span><span
+              class="method-args">()</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+        </div>
+
+        <div class="method-description">
+          <p>Computes the line, word, byte, and character counts for each file based on the options passed.</p>
+
+<p>If no options are provided, it defaults to showing line, word, and byte counts. It also displays the total counts if multiple files are processed.</p>
+
+          <div class="method-source-code" id="compute-source">
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 35</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">compute</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">no_options?</span>
+    <span class="ruby-ivar">@file_paths</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file_path</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">line_count</span> = <span class="ruby-identifier">get_line_count</span>(<span class="ruby-identifier">file_path</span>)
+      <span class="ruby-ivar">@total_line_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">line_count</span>
+      <span class="ruby-identifier">word_count</span> = <span class="ruby-identifier">get_word_count</span>(<span class="ruby-identifier">file_path</span>)
+      <span class="ruby-ivar">@total_word_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">word_count</span>
+      <span class="ruby-identifier">byte_count</span> = <span class="ruby-identifier">get_byte_count</span>(<span class="ruby-identifier">file_path</span>)
+      <span class="ruby-ivar">@total_byte_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">byte_count</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{line_count} #{word_count} #{byte_count} #{file_path}&quot;</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">show_total?</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-ivar">@file_paths</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file_path</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">line_count</span> = <span class="ruby-ivar">@options_hash</span>[<span class="ruby-string">&quot;l&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">get_line_count</span>(<span class="ruby-identifier">file_path</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-ivar">@options_hash</span>[<span class="ruby-string">&quot;l&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-ivar">@total_line_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">line_count</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">word_count</span> = <span class="ruby-ivar">@options_hash</span>[<span class="ruby-string">&quot;w&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">get_word_count</span>(<span class="ruby-identifier">file_path</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-ivar">@options_hash</span>[<span class="ruby-string">&quot;w&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-ivar">@total_word_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">word_count</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">byte_count</span> = <span class="ruby-ivar">@options_hash</span>[<span class="ruby-string">&quot;c&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">get_byte_count</span>(<span class="ruby-identifier">file_path</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-ivar">@options_hash</span>[<span class="ruby-string">&quot;c&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-ivar">@total_byte_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">byte_count</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">character_count</span> = <span class="ruby-ivar">@options_hash</span>[<span class="ruby-string">&quot;m&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">get_character_count</span>(<span class="ruby-identifier">file_path</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-ivar">@options_hash</span>[<span class="ruby-string">&quot;m&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-ivar">@total_character_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">character_count</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">format_output</span>(<span class="ruby-identifier">line_count</span>, <span class="ruby-identifier">word_count</span>, <span class="ruby-identifier">byte_count</span>, <span class="ruby-identifier">character_count</span>, <span class="ruby-identifier">file_path</span>)
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">show_total?</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
         </div>
@@ -145,47 +219,30 @@
          <h3>Private Instance Methods</h3>
        </header>
 
-      <div id="method-i-compute" class="method-detail ">
+      <div id="method-i-format_output" class="method-detail ">
         <div class="method-header">
           <div class="method-heading">
-            <span class="method-name">compute</span><span
-              class="method-args">()</span>
+            <span class="method-name">format_output</span><span
+              class="method-args">(*args)</span>
             <span class="method-click-advice">click to toggle source</span>
           </div>
         </div>
 
         <div class="method-description">
-          <p>Computes the line, word, byte, and character count for each file depending on the options passed.</p>
+          <p>Formats the output based on the options passed.</p>
 
-<p>If no options are provided, it defaults to showing line, word, and byte counts.</p>
+<p>@param [Integer, nil] line_count The line count for the file (if requested). @param [Integer, nil] word_count The word count for the file (if requested). @param [Integer, nil] byte_count The byte count for the file (if requested). @param [Integer, nil] character_count The character count for the file (if requested). @param [String] file_path The file path being processed.</p>
 
-          <div class="method-source-code" id="compute-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 33</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">compute</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">no_options?</span>
-    <span class="ruby-identifier">@@file_paths</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file_path</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">line_count</span> = <span class="ruby-identifier">get_line_count</span>(<span class="ruby-identifier">file_path</span>)
-      <span class="ruby-identifier">@@total_line_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">line_count</span>
-      <span class="ruby-identifier">word_count</span> = <span class="ruby-identifier">get_word_count</span>(<span class="ruby-identifier">file_path</span>)
-      <span class="ruby-identifier">@@total_word_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">word_count</span>
-      <span class="ruby-identifier">byte_count</span> = <span class="ruby-identifier">get_byte_count</span>(<span class="ruby-identifier">file_path</span>)
-      <span class="ruby-identifier">@@total_byte_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">byte_count</span>
-      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{line_count}   #{word_count}  #{byte_count} #{file_path}&quot;</span>
-    <span class="ruby-keyword">end</span>
-    <span class="ruby-identifier">show_total?</span>
+          <div class="method-source-code" id="format_output-source">
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 72</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">format_output</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+  <span class="ruby-identifier">line_count</span>, <span class="ruby-identifier">word_count</span>, <span class="ruby-identifier">byte_count</span>, <span class="ruby-identifier">character_count</span>, <span class="ruby-identifier">file_path</span> = <span class="ruby-identifier">args</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">byte_count</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">character_count</span>
+    <span class="ruby-identifier">puts</span> [<span class="ruby-identifier">line_count</span>, <span class="ruby-identifier">word_count</span>, <span class="ruby-identifier">byte_count</span>, <span class="ruby-identifier">file_path</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot; &quot;</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">byte_count</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">character_count</span>
+    <span class="ruby-identifier">puts</span> [<span class="ruby-identifier">line_count</span>, <span class="ruby-identifier">word_count</span>, <span class="ruby-identifier">character_count</span>, <span class="ruby-identifier">file_path</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot; &quot;</span>)
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">@@file_paths</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file_path</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">line_count</span> = <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-string">&quot;l&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">get_line_count</span>(<span class="ruby-identifier">file_path</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-      <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-string">&quot;l&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">@@total_line_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">line_count</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-      <span class="ruby-identifier">word_count</span> = <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-string">&quot;w&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">get_word_count</span>(<span class="ruby-identifier">file_path</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-      <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-string">&quot;w&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">@@total_word_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">word_count</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-      <span class="ruby-identifier">byte_count</span> = <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-string">&quot;c&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">get_byte_count</span>(<span class="ruby-identifier">file_path</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-      <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-string">&quot;c&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">@@total_byte_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">byte_count</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-      <span class="ruby-identifier">character_count</span> = <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-string">&quot;m&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">get_character_count</span>(<span class="ruby-identifier">file_path</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-      <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-string">&quot;m&quot;</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">@@total_character_count</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">character_count</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{line_count} #{word_count} #{byte_count} #{character_count} #{file_path} &quot;</span>
-    <span class="ruby-keyword">end</span>
-    <span class="ruby-identifier">show_total?</span>
+    <span class="ruby-identifier">puts</span> [<span class="ruby-identifier">line_count</span>, <span class="ruby-identifier">word_count</span>, <span class="ruby-identifier">byte_count</span>, <span class="ruby-identifier">file_path</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot; &quot;</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -206,10 +263,10 @@
         <div class="method-description">
           <p>Returns the byte count of the specified file.</p>
 
-<p>@param [String] file The file path @return [Integer] The size of the file in bytes</p>
+<p>@param [String] file The file path. @return [Integer] The size of the file in bytes.</p>
 
           <div class="method-source-code" id="get_byte_count-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 79</span>
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 105</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_byte_count</span>(<span class="ruby-identifier">file</span>)
   <span class="ruby-constant">File</span>.<span class="ruby-identifier">size</span>(<span class="ruby-identifier">file</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -231,10 +288,10 @@
         <div class="method-description">
           <p>Returns the character count of the specified file.</p>
 
-<p>@param [String] file The file path @return [Integer] The number of characters in the file</p>
+<p>@param [String] file The file path. @return [Integer] The number of characters in the file.</p>
 
           <div class="method-source-code" id="get_character_count-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 107</span>
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 133</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_character_count</span>(<span class="ruby-identifier">file</span>)
   <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">size</span>
 <span class="ruby-keyword">end</span></pre>
@@ -256,10 +313,10 @@
         <div class="method-description">
           <p>Returns the line count of the specified file.</p>
 
-<p>@param [String] file The file path @return [Integer] The number of lines in the file</p>
+<p>@param [String] file The file path. @return [Integer] The number of lines in the file.</p>
 
           <div class="method-source-code" id="get_line_count-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 87</span>
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 113</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_line_count</span>(<span class="ruby-identifier">file</span>)
   <span class="ruby-identifier">line_count</span> = <span class="ruby-value">0</span>
   <span class="ruby-constant">File</span>.<span class="ruby-identifier">foreach</span>(<span class="ruby-identifier">file</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
@@ -285,10 +342,10 @@
         <div class="method-description">
           <p>Returns the word count of the specified file.</p>
 
-<p>@param [String] file The file path @return [Integer] The number of words in the file</p>
+<p>@param [String] file The file path. @return [Integer] The number of words in the file.</p>
 
           <div class="method-source-code" id="get_word_count-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 99</span>
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 125</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_word_count</span>(<span class="ruby-identifier">file</span>)
   <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">file</span>).<span class="ruby-identifier">split</span>(<span class="ruby-regexp">/\s+/</span>).<span class="ruby-identifier">size</span>
 <span class="ruby-keyword">end</span></pre>
@@ -308,14 +365,16 @@
         </div>
 
         <div class="method-description">
-          <p>Checks if no options were provided. If no options are passed, it defaults to line, word, and byte counts.</p>
+          <p>Checks if no options were provided by the user.</p>
 
-<p>@return [Boolean] Returns true if no options are passed, otherwise false.</p>
+<p>If no options are provided, it defaults to counting lines, words, and bytes.</p>
+
+<p>@return [Boolean] Returns true if no options were passed, otherwise false.</p>
 
           <div class="method-source-code" id="no_options-3F-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 71</span>
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 97</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">no_options?</span>
-  <span class="ruby-identifier">@@options_hash</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">all?</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> }
+  <span class="ruby-ivar">@options_hash</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">all?</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">value</span><span class="ruby-operator">|</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> }
 <span class="ruby-keyword">end</span></pre>
           </div>
         </div>
@@ -335,10 +394,12 @@
         <div class="method-description">
           <p>Parses the command-line arguments to extract options and file paths.</p>
 
-<p>@param [Array&lt;String&gt;] args The command-line arguments (file paths and options)</p>
+<p>@param [Array&lt;String&gt;] args The command-line arguments (file paths and options).</p>
+
+<pre>The arguments can include file paths and options for line count (-l), word count (-w), byte count (-c), and character count (-m).</pre>
 
           <div class="method-source-code" id="parse-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 114</span>
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 141</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parse</span>(<span class="ruby-identifier">args</span>)
   <span class="ruby-identifier">files_index</span> = <span class="ruby-value">0</span>
   <span class="ruby-identifier">args</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
@@ -351,7 +412,7 @@
   <span class="ruby-keyword">end</span>
   <span class="ruby-identifier">args</span>[<span class="ruby-identifier">files_index</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file_path</span><span class="ruby-operator">|</span>
     <span class="ruby-keyword">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">file?</span>(<span class="ruby-identifier">file_path</span>)
-      <span class="ruby-identifier">@@file_paths</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">file_path</span>
+      <span class="ruby-ivar">@file_paths</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">file_path</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;ccwc: #{file_path}: open: No such file or directory&quot;</span>
     <span class="ruby-keyword">end</span>
@@ -373,14 +434,16 @@
         </div>
 
         <div class="method-description">
-          <p>Displays the total counts (line, word, byte, and character) if more than one file is processed.</p>
+          <p>Displays the total counts (line, word, and byte) if more than one file is processed.</p>
+
+<p>This method will print the cumulative counts across multiple files for the selected options.</p>
 
           <div class="method-source-code" id="show_total-3F-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 62</span>
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 86</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show_total?</span>
-  <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{@@total_line_count == 0 ? nil : @@total_line_count} &quot;</span> <span class="ruby-operator">+</span>
-         <span class="ruby-node">&quot;#{@@total_word_count == 0 ? nil : @@total_word_count} &quot;</span> <span class="ruby-operator">+</span>
-         <span class="ruby-node">&quot;#{@@total_byte_count == 0 ? nil : @@total_byte_count} total&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@file_paths</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+  <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{@total_line_count == 0 ? nil : @total_line_count} &quot;</span> <span class="ruby-operator">+</span>
+         <span class="ruby-node">&quot;#{@total_word_count == 0 ? nil : @total_word_count} &quot;</span> <span class="ruby-operator">+</span>
+         <span class="ruby-node">&quot;#{@total_byte_count == 0 ? nil : @total_byte_count} total&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@file_paths</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
         </div>
@@ -400,15 +463,15 @@
         <div class="method-description">
           <p>Validates the option passed as an argument.</p>
 
-<p>@param [String] option The option (e.g., “-l” for line count) @raise [SystemExit] If an illegal option is passed</p>
+<p>@param [String] option The option (e.g., “-l” for line count). @raise [SystemExit] If an illegal option is passed.</p>
 
           <div class="method-source-code" id="valid_option-3F-source">
-            <pre><span class="ruby-comment"># File src/ccwc.rb, line 137</span>
+            <pre><span class="ruby-comment"># File src/ccwc.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">valid_option?</span>(<span class="ruby-identifier">option</span>)
   <span class="ruby-identifier">option</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>].<span class="ruby-identifier">each_char</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">char</span><span class="ruby-operator">|</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-identifier">char</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
-      <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-identifier">char</span>] = <span class="ruby-keyword">true</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">@@options_hash</span>[<span class="ruby-identifier">char</span>].<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@options_hash</span>[<span class="ruby-identifier">char</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
+      <span class="ruby-ivar">@options_hash</span>[<span class="ruby-identifier">char</span>] = <span class="ruby-keyword">true</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@options_hash</span>[<span class="ruby-identifier">char</span>].<span class="ruby-identifier">nil?</span>
       <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;ccwc: illegal option -- #{char}&quot;</span>
       <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;usage: ccwc [-clmw] [file ...]&quot;</span>
       <span class="ruby-identifier">exit</span>

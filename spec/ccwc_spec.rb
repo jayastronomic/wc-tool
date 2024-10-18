@@ -23,4 +23,37 @@ RSpec.describe CCWC do
       expect { ccwc.compute }.to output("2 #{@file}\n").to_stdout
     end
   end
+
+  context "when -w option is passed" do
+    it "only counts words correctly for a single file" do
+      ccwc = CCWC.new(["-w", @file])
+      expect { ccwc.compute }.to output("7 #{@file}\n").to_stdout
+    end
+  end
+
+  context "when -c option is passed" do
+    it "only counts bytes correctly for a single file" do
+      ccwc = CCWC.new(["-c", @file])
+      expect { ccwc.compute }.to output("31 #{@file}\n").to_stdout
+    end
+  end
+
+  context "when -m option is passed" do
+    it "only counts characters correctly for a single file" do
+      ccwc = CCWC.new(["-m", @file])
+      expect { ccwc.compute }.to output("31 #{@file}\n").to_stdout
+    end
+  end
+
+  context "when multple files are passed with no options" do
+    it "counts the total for lines, words, and bytes" do
+      ccwc = CCWC.new([@file, @file])
+      expected = <<~OUTPUT
+        2 7 31 testfile.txt
+        2 7 31 testfile.txt
+        4 14 62 total
+      OUTPUT
+      expect { ccwc.compute }.to output(expected).to_stdout
+    end
+  end
 end

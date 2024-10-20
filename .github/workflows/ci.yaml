@@ -29,9 +29,11 @@ jobs:
 
       - name: Install dependencies
         run: bundle install --jobs 4 --retry 3
+        working-directory: ./
 
       - name: Run RuboCop
         run: bundle exec rubocop
+        working-directory: ./
 
   unit-test:
     runs-on: ubuntu-latest

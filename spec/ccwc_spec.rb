@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require_relative "../src/ccwc"
 
-RSpec.describe CCWC do
+RSpec.describe CCWC do # rubocop:disable Metrics/BlockLength
   before(:each) do
     @file = "testfile.txt"
     File.write(@file, "This is a test.\nWith two lines.")

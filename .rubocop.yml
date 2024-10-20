@@ -1,2 +1,4 @@
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+Metrics/BlockLength:
+  Max: 50

@@ -5,13 +5,17 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   super-lint:
     name: Lint code base
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.1
 
       - name: Run Super-Linter
         uses: github/super-linter@v7

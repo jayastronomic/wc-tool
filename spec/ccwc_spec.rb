@@ -2,7 +2,7 @@
 
 require_relative "../src/ccwc"
 
-RSpec.describe CCWC do # rubocop:disable Metrics/BlockLength
+RSpec.describe CCWC do
   before(:each) do
     @file = "testfile.txt"
     File.write(@file, "This is a test.\nWith two lines.")
@@ -14,36 +14,31 @@ RSpec.describe CCWC do # rubocop:disable Metrics/BlockLength
 
   context "when no options are passed" do
     it "counts lines, words, and bytes correctly for a single file" do
-      ccwc = CCWC.new([@file])
-      expect { ccwc.compute }.to output("2 7 31 #{@file}\n").to_stdout
+      expect { CCWC.new([@file]).compute }.to output("2 7 31 #{@file}\n").to_stdout
     end
   end
 
   context "when -l option is passed" do
     it "only counts lines correctly for a single file" do
-      ccwc = CCWC.new(["-l", @file])
-      expect { ccwc.compute }.to output("2 #{@file}\n").to_stdout
+      expect { CCWC.new(["-l", @file]).compute }.to output("2 #{@file}\n").to_stdout
     end
   end
 
   context "when -w option is passed" do
     it "only counts words correctly for a single file" do
-      ccwc = CCWC.new(["-w", @file])
-      expect { ccwc.compute }.to output("7 #{@file}\n").to_stdout
+      expect { CCWC.new(["-w", @file]) }.to output("7 #{@file}\n").to_stdout
     end
   end
 
   context "when -c option is passed" do
     it "only counts bytes correctly for a single file" do
-      ccwc = CCWC.new(["-c", @file])
-      expect { ccwc.compute }.to output("31 #{@file}\n").to_stdout
+      expect { CCWC.new(["-c", @file]) }.to output("31 #{@file}\n").to_stdout
     end
   end
 
   context "when -m option is passed" do
     it "only counts characters correctly for a single file" do
-      ccwc = CCWC.new(["-m", @file])
-      expect { ccwc.compute }.to output("31 #{@file}\n").to_stdout
+      expect { CCWC.new(["-m", @file]) }.to output("31 #{@file}\n").to_stdout
     end
   end
 

@@ -44,7 +44,6 @@ class CCWC
       line_count = get_line_count(file_path)
       word_count = get_word_count(file_path)
       byte_count = get_byte_count(file_path)
-
       puts "#{line_count} #{word_count} #{byte_count} #{file_path}"
     end
   end

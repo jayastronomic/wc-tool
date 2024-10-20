@@ -182,7 +182,7 @@ class CCWC
   # @raise [SystemExit] If an illegal option is passed.
   #
   # @return [void]
-  def valid_option?(options)
+  def valid_options?(options)
     options[1..].each_char do |char|
       if @options[char] == false
         @options[char] = true

@@ -23,3 +23,24 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  build:
+    name: Build Ruby Environment
+    runs-on: ubuntu-latest
+    step:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.1
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0 # Update to your project's Ruby version
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install --jobs 4 --retry 3
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
+
+      - name: Run tests
+        run: bundle exec rspec

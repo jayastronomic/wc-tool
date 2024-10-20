@@ -32,6 +32,8 @@ class CCWC
   #
   # If no options are provided, it defaults to showing line, word, and byte counts. It also
   # displays the total counts if multiple files are processed.
+  #
+  # @return [nil] Returns nil after printing the counts to stdout.
   def compute
     no_options? ? process_files_without_options : process_files_with_options
     show_total?
@@ -39,6 +41,9 @@ class CCWC
 
   private
 
+  # Processes the files and prints the line, word, and byte counts for each file when no options are provided.
+  #
+  # @return [void]
   def process_files_without_options
     @file_paths.each do |file_path|
       line_count = get_line_count(file_path)
@@ -48,6 +53,9 @@ class CCWC
     end
   end
 
+  # Processes the files and prints counts based on the provided options.
+  #
+  # @return [void]
   def process_files_with_options
     @file_paths.each do |file_path|
       line_count = @options["l"] ? get_line_count(file_path) : nil
@@ -59,22 +67,26 @@ class CCWC
     end
   end
 
-  # Formats the output based on the options passed.
+  # Formats the output based on the counts provided for each file.
   #
   # @param [Integer, nil] line_count The line count for the file (if requested).
   # @param [Integer, nil] word_count The word count for the file (if requested).
   # @param [Integer, nil] byte_count The byte count for the file (if requested).
   # @param [Integer, nil] character_count The character count for the file (if requested).
   # @param [String] file_path The file path being processed.
+  #
+  # @return [void]
   def format_output(*args)
     puts args.compact.uniq.join(" ")
   end
 
   # Displays the total counts (line, word, and byte) if more than one file is processed.
   #
-  # This method will print the cumulative counts across multiple files for the selected options.
+  # This method prints the cumulative counts across multiple files for the selected options.
+  #
+  # @return [Boolean] Returns false if fewer than two files are processed.
   def show_total?
-    return unless @file_paths.size > 1
+    return false unless @file_paths.size > 1
 
     puts "#{@total_line_count.zero? ? nil : @total_line_count} " \
          "#{@total_word_count.zero? ? nil : @total_word_count} " \
@@ -131,18 +143,29 @@ class CCWC
   # Parses the command-line arguments to extract options and file paths.
   #
   # @param [Array<String>] args The command-line arguments (file paths and options).
-  #   The arguments can include file paths and options for line count (-l), word count (-w), byte count (-c), and character count (-m).
+  #   The arguments can include file paths and options for
+  #   line count (-l),
+  #   word count (-w),
+  #   byte count (-c),
+  #   and character count (-m).
+  #
+  # @return [void]
   def parse(args)
     files_index = 0
     args.each do |arg|
       break unless arg =~ /^-/
 
-      valid_option?(arg)
+      valid_options?(arg)
       files_index += 1
     end
     store_files(args[files_index..])
   end
 
+  # Stores the file paths in the object, checking for their validity.
+  #
+  # @param [Array<String>] file_paths The list of file paths to store.
+  #
+  # @return [void]
   def store_files(file_paths)
     file_paths.each do |file_path|
       if File.file?(file_path)
@@ -157,8 +180,10 @@ class CCWC
   #
   # @param [String] option The option (e.g., "-l" for line count).
   # @raise [SystemExit] If an illegal option is passed.
-  def valid_option?(option)
-    option[1..].each_char do |char|
+  #
+  # @return [void]
+  def valid_option?(options)
+    options[1..].each_char do |char|
       if @options[char] == false
         @options[char] = true
       elsif @options[char].nil?

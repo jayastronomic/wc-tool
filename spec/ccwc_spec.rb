@@ -47,11 +47,12 @@ RSpec.describe CCWC do
 
   context "when multple files are passed with no options" do
     it "counts the total for lines, words, and bytes" do
-      ccwc = CCWC.new([@file, @file])
+      ccwc = CCWC.new([@file, @file, @file])
       expected = <<~OUTPUT
         2 7 31 testfile.txt
         2 7 31 testfile.txt
-        4 14 62 total
+        2 7 31 testfile.txt
+        6 21 93 total
       OUTPUT
       expect { ccwc.compute }.to output(expected).to_stdout
     end
